@@ -7,6 +7,8 @@
     <groupId>com.stipess1.autoupdater</groupId>
     <artifactId>auto-updater</artifactId>
     <version>1.0</version>
+    <packaging>jar</packaging>
+    <name>Updater</name>
 
     <dependencies>
         <dependency>

@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 
@@ -30,7 +31,7 @@ public class Updater
     // Set the update type
     private UpdateType updateType;
     // Get the outcome result
-    private Result result = Result.DOWNLOADED;
+    private Result result = Result.SUCCESS;
     // If next page is empty set it to true, and get info from previous page.
     private boolean emptyPage;
     // Version returned from spigot
@@ -49,8 +50,13 @@ public class Updater
         this.file = file;
         this.updateType = updateType;
 
-        downloadLink = API_RESOURCE + id + DOWNLOAD;
-        checkUpdate();
+        downloadLink = API_RESOURCE + id;
+
+        if(checkResource(downloadLink))
+        {
+            downloadLink = downloadLink + DOWNLOAD;
+            checkUpdate();
+        }
     }
 
     public enum UpdateType
@@ -71,9 +77,11 @@ public class Updater
 
         NO_UPDATE,
 
-        DOWNLOADED,
+        SUCCESS,
 
-        FAILED
+        FAILED,
+
+        BAD_ID
     }
 
     /**
@@ -95,6 +103,38 @@ public class Updater
     public String getVersion()
     {
         return version;
+    }
+
+    /**
+     * Check if id of resource is valid
+     *
+     * @param link link of the resource
+     * @return true if id of resource is valid
+     */
+    private boolean checkResource(String link)
+    {
+        try
+        {
+            URL url = new URL(link);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.addRequestProperty("User-Agent", USER_AGENT);
+
+            int code = connection.getResponseCode();
+
+            if(code != 200)
+            {
+                connection.disconnect();
+                result = Result.BAD_ID;
+                return false;
+            }
+            connection.disconnect();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
     private void checkUpdate()
@@ -156,6 +196,7 @@ public class Updater
                     else
                     {
                         plugin.getLogger().info("Update not found");
+                        result = Result.NO_UPDATE;
                     }
                 }
                 else
