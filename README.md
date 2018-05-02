@@ -25,11 +25,12 @@ There are 3 different update types:
 3. `Updater.UpdateType.CHECK_DOWNLOAD` - Checks if update exists if it does downloads it.
 
 ## Result
-There are 4 different result types: 
+There are 5 different result types:
 1. `Updater.Result.UPDATE_FOUND` - When update is found.
 2. `Updater.Result.NO_UPDATE` - When no update is found.
-3. `Updater.Result.DOWNLOADED` - When file is successfuly downloaded.
+3. `Updater.Result.SUCCESS` - When file is successfuly downloaded.
 4. `Updater.Result.FAILED` - For some reason update was not successfuly downloaded.
+5. `Updater.Result.BAD_ID` - If bad ID was passed.
 
 You can get Result with Updater#getResult.
     
