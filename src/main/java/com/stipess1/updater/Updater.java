@@ -36,19 +36,22 @@ public class Updater
     private boolean emptyPage;
     // Version returned from spigot
     private String version;
+    // If true updater is going to log progress to the console.
+    private boolean logger;
 
     private static final String DOWNLOAD = "/download";
     private static final String VERSIONS = "/versions";
     private static final String PAGE = "?page=";
     private static final String API_RESOURCE = "https://api.spiget.org/v2/resources/";
 
-    public Updater(Plugin plugin, String id, File file, UpdateType updateType)
+    public Updater(Plugin plugin, String id, File file, UpdateType updateType, boolean logger)
     {
         this.plugin = plugin;
         this.updateFolder = plugin.getServer().getUpdateFolderFile();
         this.id = id;
         this.file = file;
         this.updateType = updateType;
+        this.logger = logger;
 
         downloadLink = API_RESOURCE + id;
 
@@ -65,7 +68,7 @@ public class Updater
         VERSION_CHECK,
         // Downloads without checking the version
         DOWNLOAD,
-        // If updater finds new version automatically, download it.
+        // If updater finds new version automatically it downloads it.
         CHECK_DOWNLOAD
 
     }
@@ -172,36 +175,40 @@ public class Updater
 
                 JsonObject object = element.getAsJsonObject();
                 element = object.get("name");
-                version = element.toString().replaceAll("\"", "");
-
-                plugin.getLogger().info("Checking for update...");
+                version = element.toString().replaceAll("\"", "").replace("v","");
+                if(logger)
+                    plugin.getLogger().info("Checking for update...");
                 if(shouldUpdate(version, plugin.getDescription().getVersion()) && updateType == UpdateType.VERSION_CHECK)
                 {
                     result = Result.UPDATE_FOUND;
-                    plugin.getLogger().info("Update found!");
+                    if(logger)
+                        plugin.getLogger().info("Update found!");
                 }
                 else if(updateType == UpdateType.DOWNLOAD)
                 {
-                    plugin.getLogger().info("Downloading update... version not checked");
+                    if(logger)
+                        plugin.getLogger().info("Downloading update... version not checked");
                     download();
                 }
                 else if(updateType == UpdateType.CHECK_DOWNLOAD)
                 {
                     if(shouldUpdate(version, plugin.getDescription().getVersion()))
                     {
-                        plugin.getLogger().info("Update found, downloading now...");
-                        result = Result.UPDATE_FOUND;
+                        if(logger)
+                            plugin.getLogger().info("Update found, downloading now...");
                         download();
                     }
                     else
                     {
-                        plugin.getLogger().info("Update not found");
+                        if(logger)
+                            plugin.getLogger().info("Update not found");
                         result = Result.NO_UPDATE;
                     }
                 }
                 else
                 {
-                    plugin.getLogger().info("Update not found");
+                    if(logger)
+                        plugin.getLogger().info("Update not found");
                     result = Result.NO_UPDATE;
                 }
             }
@@ -236,7 +243,8 @@ public class Updater
         }
         catch (Exception e)
         {
-            plugin.getLogger().log(Level.SEVERE, "Updater tried to download the update, but was unsuccessful.");
+            if(logger)
+                plugin.getLogger().log(Level.SEVERE, "Updater tried to download the update, but was unsuccessful.");
             result = Result.FAILED;
         }
         finally {

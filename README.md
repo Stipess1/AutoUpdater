@@ -8,7 +8,7 @@ Uses Spiget [API](https://spiget.org/) to get information of your plugin.
 ## Usage
 ```java
 String ID = "29742";
-Updater updater = new Updater(this, ID, this.getFile(), Updater.UpdateType.CHECK_DOWNLOAD);
+Updater updater = new Updater(this, ID, this.getFile(), Updater.UpdateType.CHECK_DOWNLOAD, false);
 ```
 `this` - is the plugin instance.
 
@@ -17,6 +17,8 @@ Updater updater = new Updater(this, ID, this.getFile(), Updater.UpdateType.CHECK
 `this.getFile()` - The plugin's file name.
 
 `Updater.UpdateType.CHECK_DOWNLOAD` - sets the download type, this type will check if new update exists and immediately downloads if it does.
+
+`false` - if set to false Updater won't log the process to console.
 
 ## UpdateType
 There are 3 different update types:
