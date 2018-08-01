@@ -37,7 +37,7 @@ public class Updater
     private String version;
     // If true updater is going to log progress to the console.
     private boolean logger;
-
+    // Updater thread
     private Thread thread;
 
     private static final String DOWNLOAD = "/download";
@@ -144,6 +144,9 @@ public class Updater
         return true;
     }
 
+    /**
+     * Checks if there is any update available.
+     */
     private void checkUpdate()
     {
         try
@@ -223,11 +226,19 @@ public class Updater
         }
     }
 
+    /**
+     * Checks if plugin should be updated
+     * @param newVersion remote version
+     * @param oldVersion current version
+     */
     private boolean shouldUpdate(String newVersion, String oldVersion)
     {
         return !newVersion.equalsIgnoreCase(oldVersion);
     }
 
+    /**
+     * Downloads the file
+     */
     private void download()
     {
         BufferedInputStream in = null;
@@ -271,6 +282,9 @@ public class Updater
         }
     }
 
+    /**
+     * Updater depends on thread's completion, so it is necessary to wait for thread to finish.
+     */
     private void waitThread()
     {
         if(thread != null && thread.isAlive())
@@ -278,9 +292,8 @@ public class Updater
             try
             {
                 thread.join();
-            }catch (InterruptedException e)
-            {
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+                this.plugin.getLogger().log(Level.SEVERE, null, e);
             }
         }
     }
