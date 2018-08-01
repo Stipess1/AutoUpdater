@@ -8,7 +8,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 
@@ -25,7 +24,7 @@ public class Updater
     // The plugin file
     private File file;
     // ID of a project
-    private String id;
+    private int id;
     // return a page
     private int page = 1;
     // Set the update type
@@ -39,12 +38,14 @@ public class Updater
     // If true updater is going to log progress to the console.
     private boolean logger;
 
+    private Thread thread;
+
     private static final String DOWNLOAD = "/download";
     private static final String VERSIONS = "/versions";
     private static final String PAGE = "?page=";
     private static final String API_RESOURCE = "https://api.spiget.org/v2/resources/";
 
-    public Updater(Plugin plugin, String id, File file, UpdateType updateType, boolean logger)
+    public Updater(Plugin plugin, int id, File file, UpdateType updateType, boolean logger)
     {
         this.plugin = plugin;
         this.updateFolder = plugin.getServer().getUpdateFolderFile();
@@ -58,7 +59,8 @@ public class Updater
         if(checkResource(downloadLink))
         {
             downloadLink = downloadLink + DOWNLOAD;
-            checkUpdate();
+            thread = new Thread(new UpdaterRunnable());
+            thread.start();
         }
     }
 
@@ -95,6 +97,7 @@ public class Updater
      */
     public Result getResult()
     {
+        waitThread();
         return result;
     }
 
@@ -105,6 +108,7 @@ public class Updater
      */
     public String getVersion()
     {
+        waitThread();
         return version;
     }
 
@@ -267,4 +271,25 @@ public class Updater
         }
     }
 
+    private void waitThread()
+    {
+        if(thread != null && thread.isAlive())
+        {
+            try
+            {
+                thread.join();
+            }catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class UpdaterRunnable implements Runnable
+    {
+
+        public void run() {
+            checkUpdate();
+        }
+    }
 }

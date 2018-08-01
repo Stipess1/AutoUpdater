@@ -7,7 +7,7 @@ Uses Spiget [API](https://spiget.org/) to get information of your plugin.
 
 ## Usage
 ```java
-String ID = "29742";
+int ID = 29742;
 Updater updater = new Updater(this, ID, this.getFile(), Updater.UpdateType.CHECK_DOWNLOAD, false);
 ```
 `this` - is the plugin instance.
