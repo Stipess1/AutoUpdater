@@ -56,12 +56,8 @@ public class Updater
 
         downloadLink = API_RESOURCE + id;
 
-        if(checkResource(downloadLink))
-        {
-            downloadLink = downloadLink + DOWNLOAD;
-            thread = new Thread(new UpdaterRunnable());
-            thread.start();
-        }
+        thread = new Thread(new UpdaterRunnable());
+        thread.start();
     }
 
     public enum UpdateType
@@ -302,7 +298,11 @@ public class Updater
     {
 
         public void run() {
-            checkUpdate();
+            if(checkResource(downloadLink))
+            {
+                downloadLink = downloadLink + DOWNLOAD;
+                checkUpdate();
+            }
         }
     }
 }

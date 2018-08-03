@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AutoUpdater.iml" filepath="$PROJECT_DIR$/AutoUpdater.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AutoUpdater.iml" filepath="$PROJECT_DIR$/AutoUpdater.iml" />
+      <module fileurl="file://$PROJECT_DIR$/auto-updater.iml" filepath="$PROJECT_DIR$/auto-updater.iml" />
     </modules>
   </component>
 </project>
